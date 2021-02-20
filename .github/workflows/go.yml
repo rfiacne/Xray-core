@@ -113,7 +113,7 @@ jobs:
       - name: Build Xray
         run: |
           mkdir -p build_assets
-          go build -v -o build_assets/xray-$GOOS-$GOARCH -trimpath -ldflags "-s -w -buildid=" ./main
+          go build -v -o build_assets/xray -trimpath -ldflags "-s -w -buildid=" ./main
     
       - name: Build Mips softfloat Xray
         if: matrix.goarch == 'mips' || matrix.goarch == 'mipsle'
@@ -163,13 +163,13 @@ jobs:
           done
       - name: Change the name
         run: |
-          mv build_assets Xray-$ASSET_NAME
+          mv build_assets Xray-$GOOS-$GOARCH
       - name: Upload files to Artifacts #上传文件至Action
         uses: actions/upload-artifact@v2
         with:
           name: Xray-${{ steps.get_filename.outputs.ASSET_NAME }}
           path: |
-            ./Xray-${{ steps.get_filename.outputs.ASSET_NAME }}/*
+            ./Xray-$GOOS-$GOARCH
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         if: github.event_name == 'release'
